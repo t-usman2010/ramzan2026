@@ -10,10 +10,13 @@ const inter = Inter({
 });
 
 export const metadata = {
-  title: "Ramadan 2026 — Sehri & Iftar Countdown",
+  title: "Ramadan 2026  Sehri & Iftar Countdown",
   description:
     "Live Ramadan 2026 Sehri & Iftar countdown timer with full 30-day calendar for Islamabad, Lahore & Chiniot, Pakistan.",
   keywords: ["Ramadan 2026", "Sehri", "Iftar", "Islamabad", "Lahore", "Chiniot", "countdown", "Pakistan"],
+  verification: {
+    google: "7b9PceopiFpNvKvR0jd-IGVz7wLi7cMbT5ljbS69BfI",
+  },
 };
 
 export default function RootLayout({ children }) {
