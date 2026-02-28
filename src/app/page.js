@@ -28,7 +28,7 @@ export default function Home() {
   const { pktNow, mounted } = usePKTClock();
   const { timetable, cityName } = useCity();
   const [notifEnabled, setNotifEnabled] = useState(false);
-  const [notifFired, setNotifFired] = useState(false);
+  const firedAlertsRef = useRef(new Set());
   const audioRef = useRef(null);
 
   const ramadanDay = getRamadanDay(pktNow, RAMADAN_START_DATE);
@@ -80,13 +80,32 @@ export default function Home() {
   const cd = formatCountdown(target.secondsLeft);
   const duaOfDay = DUAS[((ramadanDay || 1) - 1) % DUAS.length];
 
+  /* ─── Request browser notification permission on enable ─── */
   useEffect(() => {
-    if (notifEnabled && !notifFired && target.secondsLeft === 0 && target.type !== "none" && target.type !== "done") {
-      audioRef.current?.play().catch(() => {});
-      setNotifFired(true);
+    if (notifEnabled && typeof Notification !== "undefined" && Notification.permission === "default") {
+      Notification.requestPermission();
     }
-    if (target.secondsLeft > 5) setNotifFired(false);
-  }, [target.secondsLeft, target.type, notifEnabled, notifFired]);
+  }, [notifEnabled]);
+
+  /* ─── Alert exactly at Sehri / Iftar time ─── */
+  useEffect(() => {
+    if (!notifEnabled || target.type === "none" || target.type === "done") return;
+
+    const key = target.type;
+    if (target.secondsLeft === 0 && !firedAlertsRef.current.has(key)) {
+      audioRef.current?.play().catch(() => {});
+
+      const eventLabel = target.type === "iftar" ? "Iftar" : "Sehri";
+      if (typeof Notification !== "undefined" && Notification.permission === "granted") {
+        try { new Notification(`${eventLabel} Time! 🕌`, { body: `It's ${eventLabel} time now for ${cityName}.` }); } catch {}
+      }
+
+      firedAlertsRef.current.add(key);
+    }
+
+    // Reset when countdown moves to a new target
+    if (target.secondsLeft > 5) firedAlertsRef.current = new Set();
+  }, [target.secondsLeft, target.type, notifEnabled, cityName]);
 
   const formattedDate = pktNow.toLocaleDateString("en-PK", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
 
@@ -156,9 +175,10 @@ export default function Home() {
               <div className="hidden sm:block w-px h-4 bg-slate-200" />
               <button
                 onClick={() => setNotifEnabled((p) => !p)}
-                className={`text-[10px] sm:text-xs font-medium px-2 py-0.5 rounded-lg transition-all ${notifEnabled ? "bg-amber-100 text-amber-600" : "bg-slate-100 text-slate-400"}`}
+                className={`text-[10px] sm:text-xs font-medium px-2 py-0.5 rounded-lg transition-all ${notifEnabled ? "bg-amber-100 text-amber-600 ring-1 ring-amber-300" : "bg-slate-100 text-slate-400 hover:bg-slate-200"}`}
+                title={notifEnabled ? "Sound alert ON — you'll be notified at Sehri & Iftar time" : "Enable sound alert for Sehri & Iftar"}
               >
-                {notifEnabled ? "🔔 ON" : "🔕 OFF"}
+                {notifEnabled ? "🔔 Alerts ON" : "🔕 Alerts OFF"}
               </button>
             </div>
           </div>

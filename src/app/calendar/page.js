@@ -1,7 +1,7 @@
 "use client";
 
 import { RAMADAN_START_DATE } from "../data/ramadanTimes";
-import { usePKTClock, getRamadanDay, to12h, getGregorianDate } from "@/components/shared";
+import { usePKTClock, getRamadanDay, to12h, getGregorianDate, getDayName } from "@/components/shared";
 import { useCity } from "@/components/CityContext";
 
 export default function CalendarPage() {
@@ -52,9 +52,10 @@ export default function CalendarPage() {
       {/* Desktop Table */}
       <div className="hidden sm:block card animate-slide-up" style={{ animationDelay: "0.1s" }}>
         {/* Header */}
-        <div className="grid grid-cols-[56px_1fr_1fr_1fr] md:grid-cols-[64px_1fr_1fr_1fr] bg-slate-50 border-b border-slate-200/60 rounded-t-2xl -mx-5 -mt-4 px-5">
+        <div className="grid grid-cols-[56px_1fr_1fr_1fr_1fr] md:grid-cols-[64px_1fr_1fr_1fr_1fr] bg-slate-50 border-b border-slate-200/60 rounded-t-2xl -mx-5 -mt-4 px-5">
           <div className="px-2 py-3.5 text-center text-[10px] font-extrabold uppercase tracking-[0.2em] text-slate-400">Day</div>
           <div className="px-2 py-3.5 text-center text-[10px] font-extrabold uppercase tracking-[0.2em] text-slate-400">Date</div>
+          <div className="px-2 py-3.5 text-center text-[10px] font-extrabold uppercase tracking-[0.2em] text-slate-400">Day Name</div>
           <div className="px-2 py-3.5 text-center text-[10px] font-extrabold uppercase tracking-[0.2em] text-teal-500">
             <span className="inline-flex items-center gap-1">
               <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="4"/></svg>
@@ -77,7 +78,7 @@ export default function CalendarPage() {
             return (
               <div
                 key={row.day}
-                className={`grid grid-cols-[56px_1fr_1fr_1fr] md:grid-cols-[64px_1fr_1fr_1fr] text-sm transition-all border-b last:border-b-0 ${
+                className={`grid grid-cols-[56px_1fr_1fr_1fr_1fr] md:grid-cols-[64px_1fr_1fr_1fr_1fr] text-sm transition-all border-b last:border-b-0 ${
                   isToday
                     ? "bg-amber-50/70 border-l-[3px] border-l-amber-400 shadow-sm"
                     : isPast
@@ -92,6 +93,9 @@ export default function CalendarPage() {
                 </div>
                 <div className="px-2 py-3 text-center text-slate-400 text-xs flex items-center justify-center">
                   {getGregorianDate(row.day, RAMADAN_START_DATE)}
+                </div>
+                <div className={`px-2 py-3 text-center text-xs flex items-center justify-center ${isToday ? "text-amber-600 font-semibold" : "text-slate-500"}`}>
+                  {getDayName(row.day, RAMADAN_START_DATE)}
                 </div>
                 <div className={`px-2 py-3 text-center tabular-nums font-semibold ${isToday ? "text-teal-700" : "text-teal-600/80"}`}>
                   {to12h(row.sehri)}
@@ -136,7 +140,7 @@ export default function CalendarPage() {
 
               {/* Date */}
               <div className="flex-1 min-w-0">
-                <p className="text-xs text-slate-400 truncate">{getGregorianDate(row.day, RAMADAN_START_DATE)}</p>
+                <p className="text-xs text-slate-400 truncate">{getDayName(row.day, RAMADAN_START_DATE)}, {getGregorianDate(row.day, RAMADAN_START_DATE)}</p>
               </div>
 
               {/* Times */}

@@ -47,6 +47,12 @@ export function getGregorianDate(day, startDate) {
   return d.toLocaleDateString("en-PK", { month: "short", day: "numeric" });
 }
 
+export function getDayName(day, startDate) {
+  const d = new Date(startDate);
+  d.setDate(d.getDate() + day - 1);
+  return d.toLocaleDateString("en-US", { weekday: "short" });
+}
+
 /* ─── usePKTClock hook ─── */
 export function usePKTClock() {
   const [mounted, setMounted] = useState(false);
