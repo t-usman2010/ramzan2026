@@ -65,6 +65,7 @@ export const CITY_DATA = {
 
   // ───────────────── LAHORE ─────────────────
   lahore: [
+    
     { day: 1,  sehri: "05:19", iftar: "17:52" },
     { day: 2,  sehri: "05:18", iftar: "17:53" },
     { day: 3,  sehri: "05:17", iftar: "17:54" },
